@@ -5,6 +5,10 @@ import Logo from "./Logo";
 import { useMediaQuery } from "react-responsive";
 import photo from '../assets/Anna.png';
 import photo2 from '../assets/Anna2.png';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/userSlice";
+import axios from "axios";
 
 function LoginForm() {
   const {
@@ -14,22 +18,33 @@ function LoginForm() {
     setError,
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
+  const url = "https://staging.regripindia.com/api/login";
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const isSmallScreen = useMediaQuery({ query: '(max-width: 1000px)' });
 
   const login = async (data) => {
+    
     try {
-        // response and url
+        const response = await axios.post(url, data);
+        console.log("Response: ", response)
+        if (response) {
+            dispatch(setUser(data));
+            // navigate("/");
+        }
     } catch (error) {
-      setError("apiError", {
-        message: error?.response?.data?.message || error.message,
-      });
-      toast.error(error?.response?.data?.message || error.message);
+    //   setError("apiError", {
+    //     message: error?.response?.data?.message || error.message,
+    //   });
+    //   toast.error(error?.response?.data?.message || error.message);
+    console.log(error);
+    
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-start md:items-center md:justify-start min-h-screen p-4 sm:p-6 md:p-8 h-screen bg-black md:flex-row md:gap-48 lg:gap-64">
+    <div className="flex flex-col justify-center items-start md:items-center md:justify-start min-h-screen p-4 sm:p-6 md:p-8 h-screen bg-black md:flex-row md:gap-48 lg:gap-64 px-16 md:px-24">
       <img
         src={isSmallScreen ? photo2 : photo}
         alt="Background"
@@ -57,10 +72,10 @@ function LoginForm() {
           <div className="mb-4">
             <input
               id="mobile_number"
-              type="number"
+              type="text"
               placeholder="Enter your mobile number"
               className="form-input mt-1 block w-full rounded-md px-4 border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium text-[14px] py-2"
-              {...register("mobile_num", {
+              {...register("contact", {
                 required: "Mobile number is required",
                 pattern: {
                   value: /^\+?[1-9]\d{1,14}$/,
