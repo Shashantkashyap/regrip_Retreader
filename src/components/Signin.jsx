@@ -35,7 +35,7 @@ function LoginForm() {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Response: ", response);
+      
       if (response) {
         dispatch(setUser(response.data.data));
         navigate("/dashboard");

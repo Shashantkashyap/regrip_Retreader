@@ -6,12 +6,11 @@ export default {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'anna': "url('/assets/Anna2.png')",
-        'anna-md': "url('/assets/Anna.png')",
-      },
+      fontFamily:{
+        inter : ['Inter', 'sans-serif'],
+        outfit : ['Outfit', 'sans-serif']
+      }
     },
   },
   plugins: [],
 }
-
