@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import Input from "./input/Input";
 import Logo from "./Logo";
 import { useMediaQuery } from "react-responsive";
-import photo from '../assets/Anna.png';
-import photo2 from '../assets/Anna2.png';
+import photo from "../assets/Anna.png";
+import photo2 from "../assets/Anna2.png";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/userSlice";
@@ -17,40 +17,51 @@ function LoginForm() {
     formState: { errors },
     setError,
   } = useForm();
-  const [showPassword, setShowPassword] = useState(false);
   const url = "https://staging.regripindia.com/api/login";
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const isSmallScreen = useMediaQuery({ query: '(max-width: 1000px)' });
+  const isSmallScreen = useMediaQuery({ query: "(max-width: 1000px)" });
 
   const login = async (data) => {
-    
+    const formData = new FormData();
+
+    formData.append("contact", data.contact);
+    formData.append("password", data.password);
+
     try {
-        const response = await axios.post(url, data);
-        console.log("Response: ", response)
-        if (response) {
-            dispatch(setUser(data));
-            // navigate("/");
-        }
+      const response = await axios.post(url, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Response: ", response);
+      if (response) {
+        dispatch(setUser(response.data.data));
+        navigate("/dashboard");
+      }
     } catch (error) {
-    //   setError("apiError", {
-    //     message: error?.response?.data?.message || error.message,
-    //   });
-    //   toast.error(error?.response?.data?.message || error.message);
-    console.log(error);
-    
+      console.error("Error:", error.response?.data || error.message);
+      setError(error?.message);
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-start md:items-center md:justify-start min-h-screen p-4 sm:p-6 md:p-8 h-screen bg-black md:flex-row md:gap-48 lg:gap-64 px-16 md:px-24">
+    <div className="flex flex-col justify-center items-center md:items-center md:justify-center min-h-screen p-4 sm:p-6 md:p-8 h-screen bg-black relative overflow-hidden w-screen">
+      {/* Background Image */}
       <img
         src={isSmallScreen ? photo2 : photo}
         alt="Background"
-        className="absolute top-0 left-0 w-full h-auto max-lg:h-screen object-cover z-0"
+        className="absolute top-0 left-0 w-full h-screen object-cover z-0"
       />
-      <div className="bg-white w-full sm:max-w-md p-6 sm:p-8 rounded-2xl font-bold md:py-[120px] md:px-[40px] relative z-10 top-20 md:top-12 lg:top-8">
+
+      {/* Form Container */}
+      <div
+        className="bg-white min-w-[320px] sm:min-w-[400px] max-w-lg p-6 sm:p-8 rounded-2xl font-bold md:py-[120px] md:px-[40px] relative z-10 top-24 md:top-12 lg:top-8 mx-auto md:ml-24"
+        style={{
+          boxShadow: "20px 0px 50px -20px rgba(0, 0, 0, 0.6)",
+        }}
+      >
         <div id="top" className="text-center">
           <h1 className="text-black text-[24px]">Sign In</h1>
           <p className="font-normal mt-[0.5px] text-gray-400 text-[14px]">
@@ -70,7 +81,7 @@ function LoginForm() {
           className="max-w-md mx-auto p-4 w-full"
         >
           <div className="mb-4">
-            <input
+            <Input
               id="mobile_number"
               type="text"
               placeholder="Enter your mobile number"
@@ -92,9 +103,9 @@ function LoginForm() {
           </div>
 
           <div className="mb-1 relative">
-            <input
+            <Input
               id="password"
-              type={!showPassword ? "password" : "text"}
+              type="password"
               placeholder="Password"
               className="form-input mt-1 block w-full rounded-md px-4 border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-medium text-[14px] py-2 mb-2"
               {...register("password", {

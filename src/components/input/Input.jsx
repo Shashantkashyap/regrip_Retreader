@@ -6,7 +6,7 @@ const Input = React.forwardRef(function (
 ) {
   return (
     <div className="flex justify-center">
-      {label && <label className="mr-2 mt-1.5 text-white">{label}</label>}
+      {label && <label className="text-sm font-medium">{label}</label>}
 
       <input
         type={type}
